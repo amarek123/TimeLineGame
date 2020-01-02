@@ -41,9 +41,9 @@ const data = [
 ] 
 
 const initialHand = []
-let k = Math.floor(Math.random()*10)
+let k = Math.floor(Math.random()*7)
 let initialTableCard = [];
-for(let i=0; i<5; i++){
+for(let i=0; i<9; i++){
   initialHand[i] = data[k+i]
 }
 
@@ -68,8 +68,6 @@ class GameScreen extends React.Component {
    
     onDrop = (e, id, position) =>{
         const card = e.dataTransfer.getData("text/plain");
-        // console.log(card, id, position)
-
         let additionalCard = [...data].filter(item => item.id == card)
         let cardsOnTable = [...this.state.cardsOnTable];
         let index = this.state.cardsOnTable.findIndex(card => card.id == id)
@@ -85,7 +83,6 @@ class GameScreen extends React.Component {
                     newCardsOnTable[i] = cardsOnTable[i-1];
                 }
             }
-            console.log(newCardsOnTable)
             this.setState(prevState => ({
                 cardsOnTable: newCardsOnTable,
                 cardsInHand: prevState.cardsInHand.filter(item => item.id != card)
