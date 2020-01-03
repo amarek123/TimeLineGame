@@ -1,0 +1,6 @@
+.playerInfoContainer{
+    width: 150px;
+    height: 200px;
+    flex-shrink: 0;
+    background-image: url(../textures/paper-186899_1920.jpg);
+}

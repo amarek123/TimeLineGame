@@ -1,0 +1,50 @@
+.gameScreen{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    background-image: url('../textures/wall-1846965_1920.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-color: #aaa; */
+}
+.gameScreenOppTop, .gameScreenOppBottom{
+   height: 30vh;
+   width: 100%;
+   /* background-color: #444; */
+}
+.gameScreenMidlle{
+   width: 60%;
+   height: 100vh;
+   /* background-color: #666; */
+}
+.gameScreenOppLeft{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+     width: 20%;
+    height: 100vh;
+    /* background-color: #888; */
+}
+
+.gameScreenOppRight{
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+     width: 20%;
+    height: 100vh;
+    /* background-color: #888; */
+ }
+.gameLogo{
+    width: 80%;
+    height: 15%;
+    margin: 0 auto 5vh auto;
+    /* background-color: royalblue; */
+}
+.gameScreenTable{
+   height: 40vh;
+   width: 100%;
+   background-image: url(../textures/paper-1074131_1280.jpg);
+   /* background-color: #ccc; */
+}

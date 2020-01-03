@@ -1,6 +1,7 @@
 import React from 'react'
 import Table from './Table';
 import Hand from './Hand'
+import styles from'../styles/GameScreen.module.css'
 
 import img1 from '../images/img1.jpg'
 import img2 from '../images/img2.jpg'
@@ -43,7 +44,7 @@ const data = [
 const initialHand = []
 let k = Math.floor(Math.random()*7)
 let initialTableCard = [];
-for(let i=0; i<9; i++){
+for(let i=0; i<5; i++){
   initialHand[i] = data[k+i]
 }
 
@@ -99,13 +100,30 @@ class GameScreen extends React.Component {
     render(){
         const {cardsOnTable, cardsInHand} = this.state
         return(
-            <>
-                Time Line
-                 <Table cardsOnTable = {cardsOnTable} allowDrop = {this.allowDrop} onDrop = {this.onDrop}/>
-                 <Hand initialHand = {cardsInHand} onDragStart = {this.onDragStart} />
-            </>
+                <div className = {styles.gameScreen}>
+                <div className = {styles.gameScreenOppLeft}>
+                     <div className = {styles.gameLogo}></div>
+                     <Hand class = 'vertical' initialHand = {cardsInHand} onDragStart = {this.onDragStart} />
+                </div>
+                <div className = {styles.gameScreenMidlle}>
+                    <div className = {styles.gameScreenOppTop}>
+                        <Hand class = 'horizontal' initialHand = {cardsInHand} onDragStart = {this.onDragStart} />
+                    </div>
+                    <div className = {styles.gameScreenTable}>
+                         <Table cardsOnTable = {cardsOnTable} allowDrop = {this.allowDrop} onDrop = {this.onDrop}/>
+                    </div>
+                        
+                    <div className = {styles.gameScreenOppBottom}>
+                        <Hand class = 'horizontal' initialHand = {cardsInHand} onDragStart = {this.onDragStart} />
+                    </div>
+                </div>
+                <div className = {styles.gameScreenOppRight}>
+                         <Hand class = 'vertical' initialHand = {cardsInHand} onDragStart = {this.onDragStart} />
+                </div>
+                </div>
         )
     }
 }
 
 export default GameScreen
+

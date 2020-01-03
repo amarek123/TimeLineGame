@@ -28,6 +28,7 @@
     margin: 1%;
     background-color: #eee;
     cursor: pointer;
+    z-index: 1;
 }
 .leftArrow p{
     position: absolute;
@@ -45,6 +46,7 @@
     margin: 1%;
     background-color: #eee;
     cursor: pointer;
+    z-index: 1;
 }
 .rightArrow p{
     position: absolute;
