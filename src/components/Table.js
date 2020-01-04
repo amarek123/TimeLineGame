@@ -36,7 +36,6 @@ class Table extends React.Component {
             />
                 <div className = {styles.cardsContainer}>
                     {cardsOnTable.splice(this.state.index, 5)}  
-                    {console.log(this.state.index)}        
                 </div>
             <SliderArow 
                 handleClick =  {(this.props.cardsOnTable.length > 5 && this.state.index < (this.props.cardsOnTable.length - 5)) ? this.handleClickRight: null}  
