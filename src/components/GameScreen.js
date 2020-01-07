@@ -6,7 +6,6 @@ import styles from'../styles/GameScreen.module.css'
 const {
     Stitch,
     RemoteMongoClient,
-    GoogleRedirectCredential,
     AnonymousCredential
   } = require('mongodb-stitch-browser-sdk');
   
@@ -32,74 +31,106 @@ class GameScreen extends React.Component {
     }
    
     onDrop = (e, id, position) =>{
-        const card = e.dataTransfer.getData("text/plain");
-        console.log([...this.state.allCards])
-        let additionalCard = [...this.state.allCards].filter(item => item.id == card)
-        let cardsOnTable = [...this.state.cardsOnTable];
-        let index = this.state.cardsOnTable.findIndex(card => card.id == id)
-    
-        if(position === 'left'){
-            let newCardsOnTable = []
-            for(let i = 0; i<=cardsOnTable.length; i++){
-                if( i < index){
-                    newCardsOnTable[i] = cardsOnTable[i];
-                }else if (i === index){
-                    newCardsOnTable[i] = additionalCard[0];
-                }else{
-                    newCardsOnTable[i] = cardsOnTable[i-1];
-                }
-            }
-            this.setState(prevState => ({
-                cardsOnTable: newCardsOnTable,
-                cardsInHandPlayer: prevState.cardsInHandPlayer.filter(item => item.id != card),
-                cardsInHandOppLeft: prevState.cardsInHandOppLeft.filter(item => item.id != card),
-                cardsInHandOppRight: prevState.cardsInHandOppRight.filter(item => item.id != card),
-                cardsInHandOppTop: prevState.cardsInHandOppTop.filter(item => item.id != card)
-            }));
-        }else{
-            this.setState(prevState => ({
-                cardsOnTable: [...prevState.cardsOnTable, additionalCard[0]],
-                cardsInHandPlayer: prevState.cardsInHandPlayer.filter(item => item.id != card),
-                cardsInHandOppLeft: prevState.cardsInHandOppLeft.filter(item => item.id != card),
-                cardsInHandOppRight: prevState.cardsInHandOppRight.filter(item => item.id != card),
-                cardsInHandOppTop: prevState.cardsInHandOppTop.filter(item => item.id != card)
-            }));
+        const card = [...this.state.allCards].filter(item => item.id === e.dataTransfer.getData("text/plain"));
+        let additionalTableCardDescription = card[0].description;
+        let index = this.state.cardsOnTable.findIndex(card => card.id === id) ;
+        const isValidate = this.validation(position, index, additionalTableCardDescription);
+        this.changeCardsOnTable(isValidate, card, index, position);
+    }
+
+    validation = (position, index, additionalTableCardDescription) =>{
+        const cardsOnTable = [...this.state.cardsOnTable]
+        let isCorrect = false;
+
+        if(cardsOnTable.length === 1 && additionalTableCardDescription < cardsOnTable[index].description && position === 'left'){
+            isCorrect = true;
+        }else if(index === (cardsOnTable.length - 1) && additionalTableCardDescription > cardsOnTable[index].description && position === 'right'){
+            isCorrect = true;
+        }else if(index === (cardsOnTable.length - 1) && additionalTableCardDescription < cardsOnTable[index].description && position==='left'&& additionalTableCardDescription> cardsOnTable[index -1].description){
+            isCorrect = true;
+        }else if( (index - 1) >= 0 && additionalTableCardDescription > cardsOnTable[index - 1].description && additionalTableCardDescription < cardsOnTable[index].description && 
+                    index !== (cardsOnTable.length - 1) && position === 'left'){
+            isCorrect = true;
+        }else if((index - 1) < 0 && additionalTableCardDescription < cardsOnTable[index].description  && index !== (cardsOnTable.length - 1)){
+            isCorrect = true;
         }
         
+        if(isCorrect){
+            return true
+        }else{
+            return false
+        }
     }
+
+    changeCardsOnTable = (isValidate, card, index) => {
+        console.log(card[0], index)
+        if(isValidate){    
+            this.addCardToTable(this.state.cardsOnTable, index, card[0])
+            this.removeCardFromHand(`cardsInHandPlayer`,card[0].id)            
+        }else{
+            this.removeCardFromHand(`cardsInHandPlayer`,card[0].id)   
+            this.addNewCardToHand('cardsInHandPlayer')
+        }
+
+    }
+
+    addCardToTable = (cardsOnTable, index, card) => {
+        let newCardsOnTable = []
+            for(let i = 0; i< cardsOnTable.length; i++){
+                if( i < index){
+                    newCardsOnTable[i] = cardsOnTable[i];
+                }else if (i === index && cardsOnTable[i].description > card.description){
+                     newCardsOnTable[i] = card;
+                     newCardsOnTable[i+1] = cardsOnTable[i];
+                }else if (i === index && cardsOnTable[i].description < card.description){
+                    newCardsOnTable[i] = cardsOnTable[i];
+                    newCardsOnTable[i+1] = card;
+                }else{
+                    newCardsOnTable[i+1] = cardsOnTable[i];
+                }
+            }
+            this.setState({
+                cardsOnTable : newCardsOnTable,
+            })
+    }
+
+    removeCardFromHand = (player, card) => {
+        console.log([player])
+        this.setState(prevState => ({
+            [player]: prevState[player].filter(item => item.id !== card),
+        }))
+    }
+
+    addNewCardToHand = (player) => {
+        let randomIndex = Math.floor(Math.random() * this.state.remainigCards.length);
+        let penaltyCard = this.state.remainigCards[randomIndex];
+        this.setState(prevState =>({
+            remainigCards: prevState.remainigCards.filter(cards => cards.id !== penaltyCard.id ),
+            [player]: [...prevState[player], penaltyCard],
+        }))
+    }
+
+    dealCards = (howMany, Cards) =>{
+        let initialHand = [];
+        let randomIndex;
+        for(let i = 0; i < howMany; i++){ 
+            if(i<5){
+                randomIndex = Math.floor(Math.random() * Cards.length);
+                initialHand = [...initialHand, Cards[randomIndex]];
+                Cards.splice(randomIndex, 1);
+            }
+        }   
+        return initialHand
+    }
+
     getRandomCards = (allCards) =>{  
         let Cards = [...allCards];
-        let initialHandPlayer = [];
-        let initialHandOppLeft = [];
-        let initialHandOppRight = [];
-        let initialHandOppTop = [];
-        let initialTableCard = [];
-        for(let i = 0; i < 6; i++){    
-            if(i<5){
-                let randomIndex = Math.floor(Math.random() * Cards.length);
-                initialHandPlayer.push(Cards[randomIndex])
-                Cards.splice(randomIndex, 1);
-            }
-            if(i<5){
-                let randomIndex = Math.floor(Math.random() * Cards.length);
-                initialHandOppLeft.push(Cards[randomIndex])
-                Cards.splice(randomIndex, 1);
-            }
-            if(i<5){
-                let randomIndex = Math.floor(Math.random() * Cards.length);
-                initialHandOppRight.push(Cards[randomIndex])
-                Cards.splice(randomIndex, 1);
-            }
-            if(i<5){
-                let randomIndex = Math.floor(Math.random() * Cards.length);
-                initialHandOppTop.push(Cards[randomIndex])
-                Cards.splice(randomIndex, 1);
-            }else{
-                let randomIndex = Math.floor(Math.random() * Cards.length);
-                initialTableCard.push(Cards[randomIndex])
-                Cards.splice(randomIndex, 1); 
-            }
-        }
+        let initialHandPlayer = this.dealCards(5, Cards);
+        let initialHandOppLeft = this.dealCards(5, Cards);
+        let initialHandOppRight = this.dealCards(5, Cards);
+        let initialHandOppTop = this.dealCards(5, Cards);
+        let initialTableCard = this.dealCards(1, Cards);
+        
         this.setState({
             allCards: [...allCards],
             remainigCards: [...Cards],
@@ -109,7 +140,6 @@ class GameScreen extends React.Component {
             cardsInHandOppRight: [...initialHandOppRight],
             cardsInHandOppTop: [...initialHandOppTop]
         })
-        console.log('w getrandomie ' + this.state.cardsOnTable[0].id)
     }
 
 
@@ -137,7 +167,7 @@ class GameScreen extends React.Component {
     }
 
     render(){
-        const {allCards,cardsOnTable, cardsInHandPlayer, cardsInHandOppLeft, cardsInHandOppRight, cardsInHandOppTop} = this.state
+        const {cardsOnTable, cardsInHandPlayer, cardsInHandOppLeft, cardsInHandOppRight, cardsInHandOppTop} = this.state
         return(
                 <div className = {styles.gameScreen}>
                 <div className = {styles.gameScreenOppLeft}>

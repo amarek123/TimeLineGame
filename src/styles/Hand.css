@@ -1,19 +1,20 @@
 .tableContainerHorizontal{
     display: flex;
-    width: 99%;
+    width: 100%;
     padding: 1vh;
     justify-content: center;
     align-items: center;
 }
 .tableContainerVertical{
     display: flex;
-    height: 75vh;
+    height: 800px;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-end;
     margin-bottom: 5vh;
 }
 .tableContainerVertical .cardContainer {
     transform: rotate(-90deg);
-    width: calc(50vh / 5);
+    width: 100px;
     margin: -20px;
 }

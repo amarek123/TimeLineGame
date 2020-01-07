@@ -11,7 +11,7 @@ const Hand = props => {
     const classesHorizontal = [`tableContainerHorizontal`];
     const classesVertical = ['tableContainerVertical'];
     return(
-        <div className = {props.class == 'vertical' ? classesVertical.join(' '): classesHorizontal.join(' ')}>
+        <div className = {props.class === 'vertical' ? classesVertical.join(' '): classesHorizontal.join(' ')}>
             <PlayerInfo name = 'Andrzej'/>
             {cardsOnHand} 
         </div>
