@@ -24,7 +24,7 @@ class Table extends React.Component {
 
         const cardsOnTable = [...this.props.cardsOnTable].map( image => (
             <>  
-              <Card allowDrop = {this.props.allowDrop} onDrop ={this.props.onDrop} key = {image.id} {...image}/>     
+              <Card visible = {true} allowDrop = {this.props.allowDrop} onDrop ={this.props.onDrop} key = {image.id} {...image}/>     
             </>
         ));
         return(

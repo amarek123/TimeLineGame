@@ -1,7 +1,7 @@
 import React from 'react'
 import  '../styles/Card.css'
 
-const Card = ({id, src, title, description, draggable, onDragStart, allowDrop, onDrop}) => (
+const Card = ({id, src, title, description, draggable, onDragStart, allowDrop, onDrop, visible}) => (
     
     onDragStart ? (
     
@@ -17,7 +17,7 @@ const Card = ({id, src, title, description, draggable, onDragStart, allowDrop, o
                      className = 'img'
                 />
                 <h1 className = 'h1'>{title} </h1>
-                <p className = 'p'>{description}</p>
+                {visible ? <p className = 'p'>{description}</p> : null}
                 {allowDrop ? <div  onDragOver={allowDrop} onDrop={(e) => onDrop(e,id,'right')} className = 'emptySpaceRight'></div> : null}
             </div>
          
@@ -34,7 +34,7 @@ const Card = ({id, src, title, description, draggable, onDragStart, allowDrop, o
                      className = 'img'
                 />
                 <h1 className = 'h1'>{title} </h1>
-                <p className = 'p'>{description}</p>
+                {visible ? <p className = 'p'>{description}</p> : null}
                 {allowDrop ? <div  onDragOver={allowDrop} onDrop={(e) => onDrop(e,id,'right')} className = 'emptySpaceRight'></div> : null}
             </div>
              

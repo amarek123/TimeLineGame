@@ -4,7 +4,7 @@ import styles from '../styles/PlayerInfo.module.css'
 const PlayerInfo = props => (
     <div className = {styles.playerInfoContainer}>
         <div className = {styles.playerInfoContainerAvatar}>
-            {/* później jakiś obrazek  */}
+            <img src = {props.img}/>
         </div>
         <p>{props.name}</p>
     </div>

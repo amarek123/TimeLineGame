@@ -33,9 +33,26 @@ class GameScreen extends React.Component {
     onDrop = (e, id, position) =>{
         const card = [...this.state.allCards].filter(item => item.id === e.dataTransfer.getData("text/plain"));
         let additionalTableCardDescription = card[0].description;
+        let player = this.setPlayer(e.dataTransfer.getData("text/plain"));
         let index = this.state.cardsOnTable.findIndex(card => card.id === id) ;
         const isValidate = this.validation(position, index, additionalTableCardDescription);
-        this.changeCardsOnTable(isValidate, card, index, position);
+        this.changeCardsOnTable(isValidate, card, index, player );
+    }
+    
+    setPlayer = (id) => {
+        if(this.state.cardsInHandOppLeft.findIndex(card => card.id === id) !== -1){
+            return 'cardsInHandOppLeft'
+        }
+        else if(this.state.cardsInHandOppRight.findIndex(card => card.id === id) !== -1){
+            return 'cardsInHandOppRight'
+        }
+        else if(this.state.cardsInHandOppTop.findIndex(card => card.id === id) !== -1){
+            return 'cardsInHandOppTop'
+        }
+        else if(this.state.cardsInHandPlayer.findIndex(card => card.id === id) !== -1){
+            return 'cardsInHandPlayer'
+        }
+
     }
 
     validation = (position, index, additionalTableCardDescription) =>{
@@ -62,14 +79,13 @@ class GameScreen extends React.Component {
         }
     }
 
-    changeCardsOnTable = (isValidate, card, index) => {
-        console.log(card[0], index)
+    changeCardsOnTable = (isValidate, card, index, player) => {
         if(isValidate){    
             this.addCardToTable(this.state.cardsOnTable, index, card[0])
-            this.removeCardFromHand(`cardsInHandPlayer`,card[0].id)            
+            this.removeCardFromHand(player,card[0].id)            
         }else{
-            this.removeCardFromHand(`cardsInHandPlayer`,card[0].id)   
-            this.addNewCardToHand('cardsInHandPlayer')
+            this.removeCardFromHand(player,card[0].id)   
+            this.addNewCardToHand(player)
         }
 
     }
@@ -95,7 +111,6 @@ class GameScreen extends React.Component {
     }
 
     removeCardFromHand = (player, card) => {
-        console.log([player])
         this.setState(prevState => ({
             [player]: prevState[player].filter(item => item.id !== card),
         }))
@@ -165,29 +180,29 @@ class GameScreen extends React.Component {
         })
         .then(allCards => this.getRandomCards(allCards))
     }
-
+    
     render(){
         const {cardsOnTable, cardsInHandPlayer, cardsInHandOppLeft, cardsInHandOppRight, cardsInHandOppTop} = this.state
         return(
                 <div className = {styles.gameScreen}>
                 <div className = {styles.gameScreenOppLeft}>
                      <div className = {styles.gameLogo}></div>
-                     <Hand class = 'vertical' initialHand = {cardsInHandOppLeft} onDragStart = {this.onDragStart} />
+                     <Hand player = {1} class = 'vertical' initialHand = {cardsInHandOppLeft} onDragStart = {this.onDragStart} />
                 </div>
                 <div className = {styles.gameScreenMidlle}>
                     <div className = {styles.gameScreenOppTop}>
-                        <Hand class = 'horizontal' initialHand = {cardsInHandOppTop} onDragStart = {this.onDragStart} />
+                        <Hand player = {2} class = 'horizontal' initialHand = {cardsInHandOppTop} onDragStart = {this.onDragStart} />
                     </div>
                     <div className = {styles.gameScreenTable}>
                          <Table cardsOnTable = {cardsOnTable} allowDrop = {this.allowDrop} onDrop = {this.onDrop}/>
                     </div>
                         
                     <div className = {styles.gameScreenOppBottom}>
-                        <Hand class = 'horizontal' initialHand = {cardsInHandPlayer} onDragStart = {this.onDragStart} />
+                        <Hand player = {0} class = 'horizontal' initialHand = {cardsInHandPlayer} onDragStart = {this.onDragStart} />
                     </div>
                 </div>
                 <div className = {styles.gameScreenOppRight}>
-                         <Hand class = 'vertical' initialHand = {cardsInHandOppRight} onDragStart = {this.onDragStart} />
+                         <Hand player = {3} class = 'vertical' initialHand = {cardsInHandOppRight} onDragStart = {this.onDragStart} />
                 </div>
                 </div>
         )
